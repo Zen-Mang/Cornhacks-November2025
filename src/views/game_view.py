@@ -106,8 +106,14 @@ class GameView(arcade.View):
 
     def load_tilemap(self, map_file):
         """Load a Tiled map using arcade.load_tilemap."""
-        # Load the tilemap
-        self.tile_map = arcade.load_tilemap(map_file, scaling=1.0)
+        try:
+            # Load the tilemap
+            self.tile_map = arcade.load_tilemap(map_file, scaling=1.0)
+        except Exception as e:
+            print(f"Error loading tilemap: {e}")
+            print("Falling back to default level")
+            self.build_default_level()
+            return
 
         # Get sprite lists from object layers based on their layer names
         # In Tiled, create Object Layers named: "Bamboo", "Wood", "Enemies"
@@ -115,19 +121,29 @@ class GameView(arcade.View):
         if "Bamboo" in self.tile_map.object_lists:
             for obj in self.tile_map.object_lists["Bamboo"]:
                 bamboo = BambooBlock()
-                bamboo.position = obj.position
+                # Access the shape coordinates properly
+                x, y = obj.shape[0]  # First point of the shape
+                width, height = obj.shape[2]  # Size tuple
+                bamboo.center_x = x + width / 2
+                bamboo.center_y = y + height / 2
                 self.bamboo_list.append(bamboo)
 
         if "Wood" in self.tile_map.object_lists:
             for obj in self.tile_map.object_lists["Wood"]:
                 wood = WoodBlock()
-                wood.position = obj.position
+                x, y = obj.shape[0]
+                width, height = obj.shape[2]
+                wood.center_x = x + width / 2
+                wood.center_y = y + height / 2
                 self.wood_list.append(wood)
 
         if "Enemies" in self.tile_map.object_lists:
             for obj in self.tile_map.object_lists["Enemies"]:
                 enemy = EnemyMonkey()
-                enemy.position = obj.position
+                x, y = obj.shape[0]
+                width, height = obj.shape[2]
+                enemy.center_x = x + width / 2
+                enemy.center_y = y + height / 2
                 self.enemy_list.append(enemy)
 
         print(f"Loaded: {len(self.bamboo_list)} bamboo, {len(self.wood_list)} wood, {len(self.enemy_list)} enemies")
@@ -187,10 +203,7 @@ class GameView(arcade.View):
 
         # Draw level complete message
         if self.level_complete:
-            arcade.draw_rectangle_filled(
-                c.SCREEN_WIDTH / 2, c.SCREEN_HEIGHT / 2,
-                400, 200, arcade.color.BLACK + (200,)
-            )
+
             arcade.draw_text(
                 "LEVEL COMPLETE!",
                 c.SCREEN_WIDTH / 2, c.SCREEN_HEIGHT / 2 + 40,

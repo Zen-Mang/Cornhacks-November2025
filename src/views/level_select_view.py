@@ -36,14 +36,16 @@ class LevelButton:
             color = arcade.color.BROWN
             text_color = arcade.color.WHITE
 
-        # Draw button background
-        arcade.draw_rectangle_filled(
-            self.x, self.y, self.width, self.height, color
-        )
+        # Draw button background (filled rectangle)
+        left = self.x - self.width / 2
+        right = self.x + self.width / 2
+        bottom = self.y - self.height / 2
+        top = self.y + self.height / 2
+        arcade.draw_lrbt_rectangle_filled(left, right, bottom, top, color)
 
         # Draw border
-        arcade.draw_rectangle_outline(
-            self.x, self.y, self.width, self.height,
+        arcade.draw_lrbt_rectangle_outline(
+            left, right, bottom, top,
             arcade.color.BLACK, 3
         )
 
