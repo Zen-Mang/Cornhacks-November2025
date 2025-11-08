@@ -13,9 +13,11 @@ class MenuView(arcade.View):
         super().__init__()
         self.title_text = None
         self.start_text = None
-
+        self.background_music = arcade.load_sound('assets/Background-Theme.mp3',streaming=True)
+        arcade.play_sound(self.background_music, loop=True, volume=.5)
     def on_show_view(self):
         arcade.set_background_color(arcade.color.WHITE_SMOKE)
+
 
         # Create text objects
         self.title_text = arcade.Text(
