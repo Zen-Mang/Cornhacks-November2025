@@ -2,6 +2,7 @@
 import arcade
 from src import constants as c
 from src.entities import PlayerMonkey, Banana, EnemyMonkey, BambooBlock, WoodBlock
+from src.progress import progress
 
 
 class GameView(arcade.View):
@@ -9,7 +10,7 @@ class GameView(arcade.View):
     Main game view
     """
 
-    def __init__(self):
+    def __init__(self, level_number=None):
         super().__init__()
         arcade.set_background_color(c.BACKGROUND_COLOR)
 
@@ -29,6 +30,14 @@ class GameView(arcade.View):
 
         # --- Tilemap ---
         self.tile_map = None
+
+        # --- Level tracking ---
+        self.level_number = level_number
+        self.level_complete = False
+        self.level_complete_timer = 0
+
+        # --- UI Text ---
+        self.level_text = None
 
     def setup(self, map_file=None):
         """
@@ -84,6 +93,16 @@ class GameView(arcade.View):
             mass=c.BANANA_MASS,
             friction=c.BANANA_FRICTION
         )
+
+        # 6. --- Create UI Text ---
+        if self.level_number:
+            self.level_text = arcade.Text(
+                f"Level {self.level_number}",
+                10, c.SCREEN_HEIGHT - 30,
+                arcade.color.BLACK,
+                font_size=20,
+                bold=True
+            )
 
     def load_tilemap(self, map_file):
         """Load a Tiled map using arcade.load_tilemap."""
@@ -162,10 +181,59 @@ class GameView(arcade.View):
                 arcade.color.BROWN, 4
             )
 
+        # Draw level text
+        if self.level_text:
+            self.level_text.draw()
+
+        # Draw level complete message
+        if self.level_complete:
+            arcade.draw_rectangle_filled(
+                c.SCREEN_WIDTH / 2, c.SCREEN_HEIGHT / 2,
+                400, 200, arcade.color.BLACK + (200,)
+            )
+            arcade.draw_text(
+                "LEVEL COMPLETE!",
+                c.SCREEN_WIDTH / 2, c.SCREEN_HEIGHT / 2 + 40,
+                arcade.color.YELLOW,
+                font_size=40,
+                anchor_x="center",
+                bold=True
+            )
+            arcade.draw_text(
+                "Returning to level select...",
+                c.SCREEN_WIDTH / 2, c.SCREEN_HEIGHT / 2 - 20,
+                arcade.color.WHITE,
+                font_size=20,
+                anchor_x="center"
+            )
+
     def on_update(self, delta_time):
         """ Run physics and handle collisions """
-        self.physics_engine.step(delta_time)
-        self.check_collisions()
+        if not self.level_complete:
+            self.physics_engine.step(delta_time)
+            self.check_collisions()
+
+            # Check if level is complete (all enemies defeated)
+            if len(self.enemy_list) == 0 and self.level_number:
+                self.complete_level()
+        else:
+            # Count down timer to return to level select
+            self.level_complete_timer += delta_time
+            if self.level_complete_timer > 2.0:  # Wait 2 seconds
+                self.return_to_level_select()
+
+    def complete_level(self):
+        """Mark the level as complete."""
+        self.level_complete = True
+        self.level_complete_timer = 0
+        progress.complete_level(self.level_number)
+        print(f"Level {self.level_number} complete! Level {self.level_number + 1} unlocked!")
+
+    def return_to_level_select(self):
+        """Return to the level selection screen."""
+        from src.views.level_select_view import LevelSelectView
+        level_select = LevelSelectView()
+        self.window.show_view(level_select)
 
     def check_collisions(self):
         """Handle collision logic."""
@@ -187,7 +255,7 @@ class GameView(arcade.View):
                         phys_obj.body.velocity = velocity * 0.5
 
         # Check enemies hit by banana, wood, or falling
-        for enemy in list(self.enemy_list):  # Use list() to avoid modification during iteration
+        for enemy in list(self.enemy_list):
             # Check banana collision
             banana_hit = arcade.check_for_collision_with_list(enemy, self.banana_list)
 
@@ -195,7 +263,7 @@ class GameView(arcade.View):
             wood_hit = arcade.check_for_collision_with_list(enemy, self.wood_list)
 
             if banana_hit or wood_hit:
-                # Enemy disappears - just remove from sprite lists, physics engine removes automatically
+                # Enemy disappears
                 enemy.remove_from_sprite_lists()
 
         # Wood can also break bamboo when falling
@@ -246,3 +314,8 @@ class GameView(arcade.View):
             # Reset the throw line
             self.throw_start_pos = None
             self.throw_end_pos = None
+
+    def on_key_press(self, key, modifiers):
+        """Handle key presses."""
+        if key == arcade.key.ESCAPE and not self.level_complete:
+            self.return_to_level_select()
