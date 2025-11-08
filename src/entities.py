@@ -20,13 +20,12 @@ class Banana(arcade.Sprite):
 
 
 class EnemyMonkey(arcade.Sprite):
-    """ The enemy monkey - disappears when hit. """
-    def __init__(self, position=None):
-        super().__init__(f"{IMG_PATH}big_head_ape.png", c.ENEMY_SCALE)
-        if position:
-            self.position = position
-        self.mass = c.ENEMY_MASS
-        self.friction = c.ENEMY_FRICTION
+    def __init__(self, x=0, y=0, width=32, height=32):
+        super().__init__()
+        self.texture = arcade.load_texture("assets/sprites/big_head_ape.png")
+        self.center_x = x + width / 2
+        self.center_y = y + height / 2
+
 
 
 class BambooBlock(arcade.Sprite):

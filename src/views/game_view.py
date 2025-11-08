@@ -121,29 +121,31 @@ class GameView(arcade.View):
         if "Bamboo" in self.tile_map.object_lists:
             for obj in self.tile_map.object_lists["Bamboo"]:
                 bamboo = BambooBlock()
-                # Access the shape coordinates properly
-                x, y = obj.shape[0]  # First point of the shape
-                width, height = obj.shape[2]  # Size tuple
-                bamboo.center_x = x + width / 2
-                bamboo.center_y = y + height / 2
+                bl = obj.shape[0]  # bottom-left
+                tr = obj.shape[2]  # top-right
+                bamboo.center_x = (bl[0] + tr[0]) / 2
+                bamboo.center_y = (bl[1] + tr[1]) / 2
                 self.bamboo_list.append(bamboo)
 
         if "Wood" in self.tile_map.object_lists:
             for obj in self.tile_map.object_lists["Wood"]:
                 wood = WoodBlock()
-                x, y = obj.shape[0]
-                width, height = obj.shape[2]
-                wood.center_x = x + width / 2
-                wood.center_y = y + height / 2
+                bl = obj.shape[0]
+                tr = obj.shape[2]
+                wood.center_x = (bl[0] + tr[0]) / 2
+                wood.center_y = (bl[1] + tr[1]) / 2
                 self.wood_list.append(wood)
 
-        if "Enemies" in self.tile_map.object_lists:
-            for obj in self.tile_map.object_lists["Enemies"]:
-                enemy = EnemyMonkey()
-                x, y = obj.shape[0]
-                width, height = obj.shape[2]
-                enemy.center_x = x + width / 2
-                enemy.center_y = y + height / 2
+        if "Monkeys" in self.tile_map.object_lists:
+            for obj in self.tile_map.object_lists["Monkeys"]:
+                bl = obj.shape[0]
+                tr = obj.shape[2]
+                enemy = EnemyMonkey(
+                    x=(bl[0] + tr[0]) / 2,
+                    y=(bl[1] + tr[1]) / 2,
+                    width=tr[0] - bl[0],
+                    height=tr[1] - bl[1]
+                )
                 self.enemy_list.append(enemy)
 
         print(f"Loaded: {len(self.bamboo_list)} bamboo, {len(self.wood_list)} wood, {len(self.enemy_list)} enemies")
@@ -163,7 +165,7 @@ class GameView(arcade.View):
         self.bamboo_list.append(bamboo2)
 
         # Enemy 1
-        enemy1 = EnemyMonkey((tower_x, 100))
+        enemy1 = EnemyMonkey(x=tower_x, y=100, width=32, height=32)
         self.enemy_list.append(enemy1)
 
         # Second floor
@@ -174,7 +176,7 @@ class GameView(arcade.View):
         self.wood_list.append(wood3)
 
         # Enemy 2
-        enemy2 = EnemyMonkey((tower_x, 180))
+        enemy2 = EnemyMonkey(x=tower_x, y=180, width=32, height=32)
         self.enemy_list.append(enemy2)
 
     # --- Game Loop Methods ---
@@ -275,8 +277,9 @@ class GameView(arcade.View):
             # Check wood collision
             wood_hit = arcade.check_for_collision_with_list(enemy, self.wood_list)
 
-            if banana_hit or wood_hit:
+            if banana_hit:
                 # Enemy disappears
+                print("confirm")
                 enemy.remove_from_sprite_lists()
 
         # Wood can also break bamboo when falling
