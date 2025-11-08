@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="60" height="34" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="13">
  <tileset firstgid="1" name="bamboo_wall" tilewidth="32" tileheight="32" tilecount="225" columns="15">
-  <image source="../../../../angryChimps/sprites/bamboo_wall.png" width="500" height="500"/>
+  <image source="../sprites/bamboo_wall.png" width="500" height="500"/>
  </tileset>
  <tileset firstgid="226" name="wood_wall" tilewidth="32" tileheight="32" tilecount="225" columns="15">
-  <image source="../../../../angryChimps/sprites/wood_wall.png" width="500" height="500"/>
+  <image source="../sprites/wood_wall.png" width="500" height="500"/>
  </tileset>
  <tileset firstgid="451" name="chimp" tilewidth="32" tileheight="32" tilecount="225" columns="15">
-  <image source="../../../../angryChimps/sprites/throwing_chimp.png" width="500" height="500"/>
+  <image source="../sprites/throwing_chimp.png" width="500" height="500"/>
  </tileset>
  <tileset firstgid="676" name="ape" tilewidth="32" tileheight="32" tilecount="225" columns="15">
-  <image source="../../../../angryChimps/sprites/big_head_ape.png" width="500" height="500"/>
+  <image source="../sprites/big_head_ape.png" width="500" height="500"/>
  </tileset>
  <tileset firstgid="901" name="background" tilewidth="1920" tileheight="1080" tilecount="1" columns="1">
-  <image source="../../../../angryChimps/sprites/background.png" width="1920" height="1080"/>
+  <image source="../sprites/background.png" width="1920" height="1080"/>
  </tileset>
  <tileset firstgid="902" name="grass_and_dirt" tilewidth="128" tileheight="128" tilecount="1" columns="1">
-  <image source="../../../../angryChimps/sprites/grass_and_dirt.png" width="128" height="128"/>
+  <image source="../sprites/grass_and_dirt.png" width="128" height="128"/>
  </tileset>
  <tileset firstgid="903" name="bamboo_wall_horizontal" tilewidth="32" tileheight="32" tilecount="225" columns="15">
-  <image source="../../../../angryChimps/sprites/bamboo_wall_horizontal.png" width="500" height="500"/>
+  <image source="../sprites/bamboo_wall_horizontal.png" width="500" height="500"/>
  </tileset>
  <tileset firstgid="1128" name="wood_wall_horizontal" tilewidth="32" tileheight="32" tilecount="225" columns="15">
-  <image source="../../../../angryChimps/sprites/wood_wall_horizontal.png" width="500" height="500"/>
+  <image source="../sprites/wood_wall_horizontal.png" width="500" height="500"/>
  </tileset>
  <layer id="1" name="Background" width="60" height="34">
   <data encoding="csv">
